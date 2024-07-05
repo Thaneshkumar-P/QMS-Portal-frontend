@@ -51,7 +51,7 @@ const Login = () => {
         .then( async (result) => {
           try{
             const response = await axios.post(
-              'http://localhost:4000/set-cookie',
+              `${process.env.REACT_APP_RENDER_API}/set-cookie`,
               { "token": result.data.Login.token },
               { withCredentials: true }
             );
@@ -113,6 +113,7 @@ const Login = () => {
               <TextField 
                 size='small'
                 label="Password"
+                type='password'
                 id='password'
                 fullWidth
               />
