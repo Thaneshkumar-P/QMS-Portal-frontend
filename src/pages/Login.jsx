@@ -50,12 +50,13 @@ const Login = () => {
         })
         .then( async (result) => {
           try{
-            const response = await axios.post(
-              `${process.env.REACT_APP_RENDER_API}/set-cookie`,
-              { "token": result.data.Login.token },
-              { withCredentials: true }
-            );
-            console.log(response)
+            document.cookie('token', result.data.Login.token)
+            // const response = await axios.post(
+            //   `${process.env.REACT_APP_RENDER_API}/set-cookie`,
+            //   { "token": result.data.Login.token },
+            //   { withCredentials: true }
+            // );
+            // console.log(response)
             dispatch(setAdminStatus(result.data.Login.admin));
             navigate('/')
           }
