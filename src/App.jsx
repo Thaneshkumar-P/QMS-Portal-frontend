@@ -24,7 +24,7 @@ const App = () => {
      return (
         <Router>
             <Routes>
-                <Route path='/login' element={<LoginRedirect component={Login}/>} />
+                <Route path='/login' element={<LoginRedirect component={Login} />} />
                 <Route path='/admin' element={<LoginRedirect component={AdminLogin}/>} />
                 <Route path="/" element={<ProtectedRoute component={Home}/>}>
                     {/* <Route path='/dashboard' element={<ProtectedRoute component={Dashboard}/>} /> */}

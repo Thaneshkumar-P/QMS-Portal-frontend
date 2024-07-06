@@ -17,6 +17,7 @@ import { gql } from '@apollo/client'
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import '../Login.sass'
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'
 
 const Login = () => {
 
@@ -50,7 +51,7 @@ const Login = () => {
         })
         .then( async (result) => {
           try{
-            document.cookie('token', result.data.Login.token)
+            Cookies.set('token', result.data.Login.token)
             // const response = await axios.post(
             //   `${process.env.REACT_APP_RENDER_API}/set-cookie`,
             //   { "token": result.data.Login.token },
