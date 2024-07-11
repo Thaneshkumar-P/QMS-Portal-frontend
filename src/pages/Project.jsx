@@ -837,8 +837,8 @@ const Project = () => {
         ) : (
           <Fade in={checked}>
             <Box>
-              <Box sx={{ marginBottom: 1 }}>
-                <Paper sx={{ padding: 2 }}>
+              <Box sx={{ margin: -1 }}>
+                <Paper sx={{ padding: 2, marginBottom: '16px', borderRadius: 0 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={3}>
                       <Grid containter spacing={1} display="flex">

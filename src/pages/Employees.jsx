@@ -1,4 +1,4 @@
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid, Typography, Input, Button, TextField, Fab, Dialog, DialogTitle, DialogContent, Checkbox, DialogActions, Alert } from "@mui/material";
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid, Typography, Input, Button, TextField, Fab, Dialog, DialogTitle, DialogContent, Checkbox, DialogActions, Alert, Switch } from "@mui/material";
 import { createHttpLink, gql } from '@apollo/client'
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ChevronRight } from '@mui/icons-material'
@@ -120,7 +120,10 @@ const Employees = () => {
               setTimeout(() => {
                 document.getElementsByClassName('MuiAlert-message')[0].innerHTML = `User created successfully`
               }, 1)
-              setTimeout(() => setAlert(false), 2000)
+              setTimeout(() => {
+                setAlert(false)
+                setCreationSuccess(false)
+              }, 2000)
             }
             catch{
 
@@ -155,9 +158,11 @@ const Employees = () => {
       <Box sx={{
         margin: 1
       }}>
-      <Box marginBottom={2}>
+      <Box marginBottom={2} margin={-1} >
       <Paper sx={{
         padding: 2,
+        marginBottom: '16px',
+        borderRadius: 0 
       }}>
         <Box display='flex' justifyContent='space-between'>
           <Box display='flex' alignItems='center'>
@@ -224,7 +229,8 @@ const Employees = () => {
           </Box>
           <Box sx={{margin: 1, display: "flex", alignItems: 'center'}}>
             <Typography>Administrator - </Typography>
-            <input type="checkbox" id="admin" style={{width: '15px', height: '15px'}}/>
+            <Switch id="admin"></Switch>
+            {/* <input type="checkbox" id="admin" style={{width: '15px', height: '15px'}}/> */}
           </Box>
         </DialogContent>
         <DialogActions>
