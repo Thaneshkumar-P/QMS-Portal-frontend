@@ -10,6 +10,8 @@ import Activity from './pages/Activity'
 import Employees from './pages/Employees'
 import Project from './pages/Project'
 import AdminLogin from './pages/AdminLogin'
+import Discussion from './pages/Discussion'
+import DiscussionChat from './components/DiscussionChat'
 
 const ProtectedRoute = ({ component: Component }) => (
     Cookies.get('token') ? <Component /> : <Navigate to='/login' />
@@ -32,6 +34,9 @@ const App = () => {
                     {/* <Route path='/activity' element={<ProtectedRoute component={Activity}/>} /> */}
                     <Route path='/employees' element={<ProtectedRoute component={Employees}/>} />
                     <Route path='/projects' element={<ProtectedRoute component={Project}/>} />
+                    <Route path='/discussion' element={<ProtectedRoute component={Discussion}/>} >
+                        <Route path='/discussion/:id' element={<ProtectedRoute component={DiscussionChat} />}/>
+                    </Route>
                 </Route>
                 <Route path='/*' element={<Error404 />} />
             </Routes>

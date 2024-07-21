@@ -152,7 +152,7 @@
 import { Button, Avatar, IconButton, Drawer } from "@mui/material";
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { Folder, Logout, MenuOutlined, People } from '@mui/icons-material';
+import { Folder, Logout, MenuOutlined, People, GroupWork } from '@mui/icons-material';
 import Paper from "@mui/material/Paper";
 import { useLocation, useNavigate } from "react-router-dom";
 import '../Sidebar.sass';
@@ -170,6 +170,8 @@ const Sidebar = () => {
         return 1;
       case '/employees':
         return 2;
+      case String(path).indexOf('/dashboard'):
+        return 3;
       default:
         return 0;
     }
@@ -184,6 +186,7 @@ const Sidebar = () => {
 
   function handleSignOut() {
     Cookies.remove('token');
+    localStorage.clear();
     setTimeout(() => navigate('/projects'), 1);
     console.log(1);
   }
@@ -218,6 +221,7 @@ const Sidebar = () => {
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
         borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
         backgroundColor: '#0A2463'
       }}>
         <Box sx={{ padding: open ? 1.2 : 1.25, paddingTop: 1.2 }}>
@@ -272,6 +276,18 @@ const Sidebar = () => {
             }}
               onClick={() => gotTo('/employees', 2)}
             >{open && 'Employees'}</Button>
+            <Button color="primary" className="sidebar-button" startIcon={<GroupWork />} sx={{
+              justifyContent: "flex-start",
+              minWidth: 0,
+              backgroundColor: select === 3 ? '#d9e7ff' : 'transparent',
+              ":hover": {
+                backgroundColor: select === 3 ? '#d9e7ff' : 'rgba(0, 85, 255, 0.21)',
+                boxShadow: "none"
+              },
+              color: select === 3 ? 'black' : 'white',
+            }}
+              onClick={() => gotTo('/discussion', 3)}
+            >{open && 'Discussion'}</Button>
             <Button color="primary" className="sidebar-button" startIcon={<Logout />} sx={{
               justifyContent: "flex-start",
               minWidth: 0,
