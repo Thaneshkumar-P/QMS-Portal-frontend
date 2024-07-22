@@ -1,8 +1,9 @@
-import { Close, Group, Search } from "@mui/icons-material";
-import { Box, Button, Drawer, IconButton, Paper, TextField, Typography } from "@mui/material";
+import { Close, Group, More, MoreOutlined, Search } from "@mui/icons-material";
+import { Box, Button, Drawer, IconButton, Menu, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { styled } from "@mui/system";
 import DP from '../assets/evil-rabbit.png';
+import '../discussionChat.css'
 
 const CustomBox = styled(Box)({
   "&::-webkit-scrollbar": {
@@ -118,7 +119,7 @@ const DiscussionChat = () => {
           open={open}
           PaperProps={{
             sx: {
-              width: open ? 200 : 0,
+              width: open ? 250 : 0,
               transition: "width 0.3s",
               overflowX: "hidden",
               position: "sticky",
@@ -127,7 +128,7 @@ const DiscussionChat = () => {
             },
           }}
         >
-          <Paper sx={{ width: 200 }} elevation={0}>
+          <Paper sx={{  }} elevation={0}>
             <Box display={"flex"} alignItems={"center"}>
               <Typography variant="h6" width="100%" padding={2}>
                 Members
@@ -149,7 +150,7 @@ const DiscussionChat = () => {
             <Box paddingLeft={2} marginTop={2}>
               <Box>
                 <div>
-                  <div className="mb-2 flex items-center">
+                  <div className="mb-2 flex items-center" style={{ width: 'fit-content'}}>
                     <div className="flex items-center gap-3">
                       <img
                         src={DP}
@@ -164,6 +165,12 @@ const DiscussionChat = () => {
                           Software Developer
                         </p>
                       </div>
+                      <IconButton>
+                        <MoreOutlined />
+                      </IconButton>
+                      <Menu open={false}>
+                        <Button color="error">Remove</Button>
+                      </Menu>
                     </div>
                   </div>
                 </div>

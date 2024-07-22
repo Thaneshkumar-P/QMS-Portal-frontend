@@ -1,9 +1,10 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Step, StepLabel, Stepper, StepperContext } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, Select, Step, StepLabel, Stepper, StepperContext, TextField } from "@mui/material";
 import Sidebar from "../components/Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { ArrowBack, ChevronLeft, ChevronRight, Close } from "@mui/icons-material";
 import { styled } from "@mui/system";
+import dp from '../assets/evil-rabbit.png'
 
 const CustomBox = styled(Box)({
   "&::-webkit-scrollbar": {
@@ -27,7 +28,7 @@ const Discussion = () => {
 
   let steps = ['Start', 'choose', 'create']
   const [activeStep, setActiveStep] = useState(0)
-
+  const [open, setOpen] = useState(false)
   const [discussion, setDiscussion] = useState([])
   const [skipped, setSkipped] = useState(new Set());
 
@@ -35,13 +36,15 @@ const Discussion = () => {
   let navigate = useNavigate()
 
   const addDiscussion = () => {
+    let name = document.getElementById('discussionName')
     discussion.push({
-      DiscussionName: 'Web Development',
+      DiscussionName: name.value,
       createdBy: 'Thanesh Kumar',
       endAt: '26/07/2024',
       id: discussion.length + 1,
     })
     setDiscussion([...discussion])
+    name.value = ''
   }
 
   const isStepSkipped = (step) => {
@@ -69,32 +72,44 @@ const Discussion = () => {
 
   return (
     <>
-      <Box padding={1} bgcolor='white' margin={0} >
+      <Box padding={1} bgcolor='white' margin={0} overflow={"hidden"}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <CustomBox display='flex' flexDirection='column' height='100vh' width='30%' padding={0.5} sx={{
             overflowX: 'scroll',
           }}>
-            <Button fullWidth variant="contained" onClick={addDiscussion}>+ Discussion</Button>
+            <Button fullWidth variant="contained" onClick={() => setOpen(true)}>+ Discussion</Button>
             {
               discussion.map((discussion) => (
                 <Box>
                   <Button variant="outlined" fullWidth onClick={() => navigate(`/discussion/${discussion.id}`)} sx={{
-                    justifyContent: 'flex-end',
+                    justifyContent: 'space-evenly',
                     marginTop: 0.5,
                     marginBottom: 0.5,
                     color: 'black'
                   }}>
-                    <Box display='flex' flexDirection='column'>
+                    
                       <Box>
-                        {discussion.DiscussionName}
+                        <img 
+                          src={dp}
+                          alt="hello"
+                          width={50}
+                          height={50}
+                          className="rounded"
+                        />
                       </Box>
-                      <Box fontSize='10px' display='flex'>
-                        {discussion.createdBy}
+                      <Box>
+                        <Box>
+                          {discussion.DiscussionName}
+                        </Box>
+                        <Box fontSize='10px' display='flex'>
+                          {discussion.createdBy}
+                        </Box>
+                        <Box fontSize='10px' display='flex'>
+                          {discussion.endAt}
+                        </Box>
+
                       </Box>
-                      <Box fontSize='10px' display='flex'>
-                        {discussion.endAt}
-                      </Box>
-                    </Box>  
+                    
                   </Button> 
                 </Box>
               ))
@@ -108,109 +123,58 @@ const Discussion = () => {
           </div>
         </div>
       </Box>
-      <Dialog open={false}>
+      <Dialog open={open} >
+        <DialogTitle sx={{ paddingLeft: 0 }}>
+            { activeStep === 0 ? 
+              <IconButton onClick={() => setOpen(false)}>
+                <Close /> 
+              </IconButton>
+              : 
+              <IconButton onClick={handleBack}>
+                <ArrowBack />
+              </IconButton>
+            }
+          Create Discussion
+        </DialogTitle>
+        <DialogContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, flexDirection: 'column', padding: 5 }}>
+          
+          <TextField label="Discussion Name" variant="standard" id="discussionName" required sx={{ marginTop: 2, marginBottom: 2 }} />
+          <Select defaultValue={'Choose Project'} fullWidth>
+            
+          </Select>
+          <Button variant="contained" fullWidth onClick={addDiscussion}>
+            Create Discussion
+          </Button>
+          
 
-        <DialogTitle>Create Discussion</DialogTitle>
-        <DialogContent>
-          <Stepper activeStep={activeStep}>
-            {/* {steps.map((label, index) => {
+          {/* <Stepper activeStep={activeStep}>
+            {steps.map((label, index) => {
               const stepProps = {};
               const labelProps = {};
               if (isStepSkipped(index)) {
                 stepProps.completed = false;
               }
               return (
-                <Step key={label} {...stepProps}>
-                  <StepLabel {...labelProps}>{label}</StepLabel>
-                </Step>
+                <></>
               );
-            })} */}
+            })}
 
-            <Step>
-              Hello
-            </Step>
-          </Stepper>
-          {activeStep === steps.length - 1 && (
+          </Stepper> */}
+          {/* {activeStep === steps.length - 1 && (
             <>
-              <div className="stepper">
-                {/* <Button onClick={handleSubmit}>Submit</Button> */}
-              </div>
-              <Box>
-                {/* <Button sx={{mr: 5}} onClick={handleSubmit}>Submit</Button> */}
-              </Box>
-              
-              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button
-                  color="inherit"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  sx={{ mr: 1 }}
-                >
-                  Back
-                </Button>
-                <Box sx={{ flex: '1 1 auto' }} />
-                <Button onClick={handleReset}>Reset</Button>
-              </Box>
+              <input type="file" id="dp" />
             </>
           )} 
           {activeStep === 0 && (
             <>
-              <div className="stepperZero" style={{ textAlign: 'center' }}>
-
-              </div>
-              <div style={{ paddingTop: 5, textAlign: 'center' }}>
-                <div>
-
-                </div>
-                <div style={{ paddingTop: 20, textAlign: 'center' }}>
-
-                </div>
-              </div>
-              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button
-                  color="inherit"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  sx={{ mr: 1 }}
-                >
-                  Back
-                </Button>
-                <Box sx={{ flex: '1 1 auto' }} />
-                <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                </Button>
-              </Box>
+              <Button onClick={handleNext}>Next</Button>
             </>
           )}
           {activeStep === 1 && (
             <>
-              <div >
-                <div className="stepper">
-                  
-                </div>
-                <div className="stepperOneSub">
-                  
-                </div>
-                <div className="stepperOneSub" style={{paddingTop: 50}}>
-
-                </div>
-              </div>
-              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button
-                  color="inherit"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  sx={{ mr: 1 }}
-                >
-                  Back
-                </Button>
-                <Box sx={{ flex: '1 1 auto' }} />
-                <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                </Button>
-              </Box>
+              <Button onClick={handleNext}>Next</Button>
             </>
-          )}
+          )} */}
 
           {/* <DialogContentText>
 

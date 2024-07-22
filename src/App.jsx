@@ -8,7 +8,7 @@ import Error404 from './pages/404'
 import Chat from './pages/Chat'
 import Activity from './pages/Activity'
 import Employees from './pages/Employees'
-import Project from './pages/Project'
+import Project, { NewProject } from './pages/Project'
 import AdminLogin from './pages/AdminLogin'
 import Discussion from './pages/Discussion'
 import DiscussionChat from './components/DiscussionChat'
@@ -33,7 +33,10 @@ const App = () => {
                     {/* <Route path='/chats' element={<ProtectedRoute component={Chat}/>} /> */}
                     {/* <Route path='/activity' element={<ProtectedRoute component={Activity}/>} /> */}
                     <Route path='/employees' element={<ProtectedRoute component={Employees}/>} />
-                    <Route path='/projects' element={<ProtectedRoute component={Project}/>} />
+                    <Route path='/projects' element={<ProtectedRoute component={Project}/>} >
+                        
+                    </Route>
+                    <Route path='/projects/new' element={<ProtectedRoute component={NewProject}/>} />
                     <Route path='/discussion' element={<ProtectedRoute component={Discussion}/>} >
                         <Route path='/discussion/:id' element={<ProtectedRoute component={DiscussionChat} />}/>
                     </Route>

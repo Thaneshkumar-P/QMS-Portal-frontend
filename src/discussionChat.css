@@ -1,0 +1,23 @@
+.MuiButton-text
+  /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif !important */
+
+
+.MuiButtonBase-root {
+  text-transform: none !important
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border: none !important
+}
+
+.MuiOutlinedInput-root{
+  padding: 5px 10px !important
+}
+
+  
+input {
+  padding: 5px 10px !important;
+  /* background-color: #007bff24 !important */
+  border-radius: 6px;
+  color: black !important
+}
