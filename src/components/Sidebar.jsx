@@ -154,13 +154,14 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { Folder, Logout, MenuOutlined, People, GroupWork } from '@mui/icons-material';
 import Paper from "@mui/material/Paper";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import '../Sidebar.sass';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from "react";
 import Logo from "../assets/eghai-250x150-logo-2.png"
 
 const Sidebar = () => {
+  const { id } = useParams()
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -170,7 +171,7 @@ const Sidebar = () => {
         return 1;
       case '/employees':
         return 2;
-      case String(path).indexOf('/dashboard'):
+      case '/dashboard':
         return 3;
       default:
         return 0;

@@ -1,60 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  projects: [
-    {
-      projectName: 'Project 1',
-      projectId: '001',
-      category: 'Web',
-      projectStatus: 'On-Going',
-      phases: [
-        {
-          phaseName: 'Analysis',
-          phaseCheckLists: [
-            {
-              isChecked: false,
-              comment1: 'Hello',
-              comment2: 'hello',
-              checkListName: 'Data1'
-            }
-          ]
-        },
-        {
-          phaseName: 'Design',
-          phaseCheckLists: [
-            {
-              isChecked: false,
-              comment1: '',
-              comment2: '',
-              checkListName: 'Data2'
-            }
-          ]
-        },
-        {
-          phaseName: 'Development',
-          phaseCheckLists: [
-            {
-              isChecked: false,
-              comment1: '',
-              comment2: '',
-              checkListName: 'Data3'            
-            }
-          ]
-        },
-        {
-          phaseName: 'Test & Deploy',
-          phaseCheckLists: [
-            {
-              isChecked: false,
-              comment1: '',
-              comment2: '',
-              checkListName: 'Data4'
-            }
-          ]
-        }
-      ] 
-    }
-  ],
+  projects: [],
 };
 
 const projectSlice = createSlice({
@@ -64,6 +11,15 @@ const projectSlice = createSlice({
     addProject: (state, action) => {
       state.projects.push(action.payload);
     },
+    addTask: (state, action) => {
+      const { projectId, phaseId, task } = action.payload;
+      const project = state.projects.find(p => p.projectId === projectId);
+      const phase = project.phases.find(p => p.id === phaseId)
+      if (phase) {
+        phase.tasks.push(task);
+      }
+
+    },
     addPhase: (state, action) => {
       const { projectId, phase } = action.payload;
       const project = state.projects.find(p => p.projectId === projectId);
@@ -71,6 +27,7 @@ const projectSlice = createSlice({
         project.phases.push(phase);
       }
     },
+
     updateCheckList: (state, action) => {
       const { projectId, phaseIndex, checkListIndex, ...updates } = action.payload;
       const projectToUpdate = state.projects.find(project => project.projectId === projectId);
@@ -109,5 +66,5 @@ const projectSlice = createSlice({
   },
 });
 
-export const { addProject, addPhase, updateCheckList, addNewCheckList, deleteCheckList, updateCheckListStatus, setProject } = projectSlice.actions;
+export const { addProject, addPhase, updateCheckList, addNewCheckList, deleteCheckList, updateCheckListStatus, setProject, addTask } = projectSlice.actions;
 export default projectSlice.reducer;
