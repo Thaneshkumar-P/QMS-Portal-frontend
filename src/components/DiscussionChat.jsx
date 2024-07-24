@@ -43,7 +43,7 @@ const DiscussionChat = () => {
 
   return (
     <>
-      <Box display="flex" height="98vh" className="md:hidden">
+      <Box display="flex" height="97vh" className="md:hidden">
         <Box
           borderRadius="0.375rem"
           padding="0.5rem"

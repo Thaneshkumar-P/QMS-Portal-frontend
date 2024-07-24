@@ -6,12 +6,13 @@ import Home from './Home';
 import Error404 from './pages/404';
 import Chat from './pages/Chat';
 import Activity from './pages/Activity';
-import Employees from './pages/Employees';
+import Employees from './pages/employees/Employees';
 import Project, { NewProject } from './pages/projects/Project';
 import AdminLogin from './pages/AdminLogin';
 import Discussion from './pages/Discussion';
 import DiscussionChat from './components/DiscussionChat';
 import ViewProject, { ProjectOverview, ProjectPhases, ProjectFiles, ProjectTeams, ProjectSettings, ProjectTasks } from './pages/projects/ViewProject';
+import NewEmployee from './pages/employees/NewEmployee';
 
 const ProtectedRoute = ({ component: Component }) => (
   Cookies.get('token') ? <Component /> : <Navigate to='/login' />
@@ -29,11 +30,13 @@ const App = () => {
         <Route path='/admin' element={<LoginRedirect component={AdminLogin} />} />
         <Route path="/" element={<ProtectedRoute component={Home} />}>
           <Route path='/employees' element={<ProtectedRoute component={Employees} />} />
+          <Route path='/employees/new' element={<ProtectedRoute component={NewEmployee} />} />
           <Route path='/projects' element={<ProtectedRoute component={Project} />} />
           <Route path='/projects/new' element={<ProtectedRoute component={NewProject} />} />
           <Route path='/projects/:projectId' element={<ProtectedRoute component={ViewProject} />}>
             <Route path='overview' element={<ProtectedRoute component={ProjectOverview} />} />
             <Route path='phases' element={<ProtectedRoute component={ProjectPhases} />} />
+            <Route path='tasks' element={<Navigate to='/projects' />} />
             <Route path='tasks/:phaseId' element={<ProtectedRoute component={ProjectTasks} />} />
             <Route path='files' element={<ProtectedRoute component={ProjectFiles} />} />
             <Route path='teams' element={<ProtectedRoute component={ProjectTeams} />} />

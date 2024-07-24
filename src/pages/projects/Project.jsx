@@ -456,92 +456,91 @@ const Project = () => {
   return (
     <>
       <Box>
-        <Fade in={checked}>
-          <Box>
-            <Box padding={2} bgcolor='white' display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-              <Box width='100%'>
-                <Typography variant="h5">Projects</Typography>
-              </Box>
-              <Box width='25%'>
-                <div className="relative flex flex-1 flex-shrink-0" id="searchProject">
-                  <label htmlFor="search" className="sr-only">
-                    Search
-                  </label>
-                  <input
-                    className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                    placeholder='Search Project'
-                  />
-                  {/* <Search className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" /> */}
-                </div>
-              </Box>
-              <Box>
-                <Button variant="contained" startIcon={<Search />} size="small" onClick={onSearch}>Search</Button>
-              </Box>
-              <Box>
-                <Button variant="contained" size="small" onClick={() => navigate('/projects/new')}>New</Button>
-              </Box>
+        <Box>
+          <Box padding={2} bgcolor='white' display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
+            <Box width='100%'>
+              <Typography variant="h5">Projects</Typography>
             </Box>
-            <Box sx={{ padding: 1, overflow: 'hidden' }}>
-            <table className="hidden w-full rounded-md text-gray-900 md:block overflow-y-scroll h-[80vh]">
-              <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                <tr>
-                  <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                    Name
-                  </th>
-                  <th scope="col" className="px-4 py-5 font-medium">
-                    Id
-                  </th>
-                  <th scope="col" className="px-3 py-5 font-medium">
-                    Client
-                  </th>
-                  <th scope="col" className="px-3 py-5 font-medium w-full">
-                    Progress
-                  </th>
-                  <th scope="col" className="px-3 py-5 font-medium">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 text-gray-900">
-                {projects.map((project) => (
-                  <tr key={project.projectId} className="group cursor-pointer" onClick={() => navigate(`/projects/${project.projectId}/overview`)}>
-                    <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                      <div className="flex items-center gap-3">
-                        {/* <img
-                          src={customer.image_url}
-                          className="rounded-full"
-                          alt={`${customer.name}'s profile`}
-                          width={28}
-                          height={28}
-                        /> */}
-                        <p>{project.projectName}</p>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                      {project.projectId}
-                    </td>
-                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                      {project.clientName}
-                    </td>
-                    <td className=" bg-white px-4 py-5 text-sm">
-                      <div className="flex justify-between mb-1">
-                        <span className="text-base font-medium text-blue-700 dark:text-white">Current Process</span>
-                        <span className="text-sm font-medium text-blue-700 dark:text-white">{project.progress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                        <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: project.progress + '%' }}></div>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                      {project.startDate === new Date()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <Box width='25%'>
+              <div className="relative flex flex-1 flex-shrink-0" id="searchProject">
+                <label htmlFor="search" className="sr-only">
+                  Search
+                </label>
+                <input
+                  className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                  placeholder='Search Project'
+                />
+                {/* <Search className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" /> */}
+              </div>
+            </Box>
+            <Box>
+              <Button variant="contained" startIcon={<Search />} size="small" onClick={onSearch}>Search</Button>
+            </Box>
+            <Box>
+              <Button variant="contained" size="small" onClick={() => navigate('/projects/new')}>New</Button>
             </Box>
           </Box>
-        </Fade>
+          <Box sx={{ padding: 1, overflow: 'hidden' }}>
+          <table className="hidden w-full rounded-md text-gray-900 md:block overflow-y-scroll h-[80vh]">
+            <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+              <tr>
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                  Name
+                </th>
+                <th scope="col" className="px-4 py-5 font-medium">
+                  Id
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Client
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium w-full">
+                  Progress
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 text-gray-900">
+              {projects.map((project) => (
+                <tr key={project.projectId} className="group cursor-pointer" onClick={() => navigate(`/projects/${project.projectId}/overview`)}>
+                  <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                    <div className="flex items-center gap-3">
+                      {/* <img
+                        src={customer.image_url}
+                        className="rounded-full"
+                        alt={`${customer.name}'s profile`}
+                        width={28}
+                        height={28}
+                      /> */}
+                      <p>{project.projectName}</p>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                    {project.projectId}
+                  </td>
+                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                    {project.clientName}
+                  </td>
+                  <td className=" bg-white px-4 py-5 text-sm">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-base font-medium text-blue-700 dark:text-white">Current Process</span>
+                      <span className="text-sm font-medium text-blue-700 dark:text-white">{project.progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: project.progress + '%' }}></div>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                    {project.startDate === new Date()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </Box>
+        </Box>
+      
       </Box>
       <CustomizedSnackbars open={openSnack} setOpen={setOpenSnack} type={snackType} message={snackMessage} />
     </>
@@ -716,7 +715,9 @@ export const NewProject = () => {
 
   const handleAddPhase = () => {
     if (phaseName.trim()) {
-      setPhases([...phases, { id: phaseName + (phases.length + 1), name: phaseName, tasks: [] }]);
+      setPhases([...phases, { id: phaseName + (phases.length + 1), name: phaseName, tasks: [], tasksCompleted: 0, totalTasks: 0,
+        taskApproved: 0
+      }]);
       setPhaseName('');
     }
   };
@@ -929,7 +930,7 @@ export const NewProject = () => {
             <ArrowBack />
           </IconButton>
           <Box width="100%">
-            <Typography variant="h5">Create New Projects</Typography>
+          <h5 className="text-medium text-[25px]">Create New Project</h5>
           </Box>
         </Box>
         <Box margin={9} marginTop={0}>

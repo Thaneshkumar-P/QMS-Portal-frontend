@@ -17,6 +17,7 @@ const projectSlice = createSlice({
       const phase = project.phases.find(p => p.id === phaseId)
       if (phase) {
         phase.tasks.push(task);
+        phase.totalTasks++
       }
 
     },
@@ -27,7 +28,6 @@ const projectSlice = createSlice({
         project.phases.push(phase);
       }
     },
-
     updateCheckList: (state, action) => {
       const { projectId, phaseIndex, checkListIndex, ...updates } = action.payload;
       const projectToUpdate = state.projects.find(project => project.projectId === projectId);
@@ -62,9 +62,28 @@ const projectSlice = createSlice({
     setProject: (state, action) => {
       const { projects } = action.payload
       state.projects = projects
+    },
+    startTask: (state, action) => {
+      const { projectId, phaseIndex, taskIndex } = action.payload
+      const project = state.projects.find(p => p.projectId === projectId);
+      project.phases[phaseIndex].tasks[taskIndex].started = true
+    },
+    completeTask: (state, action) => {
+      const { projectId, phaseIndex, taskIndex } = action.payload
+      const project = state.projects.find(p => p.projectId === projectId);
+      project.phases[phaseIndex].tasksCompleted++
+      project.phases[phaseIndex].tasks[taskIndex].completed = true
+    },
+    approveTask: (state, action) => {
+      const { projectId, phaseIndex, taskIndex } = action.payload
+      const project = state.projects.find(p => p.projectId === projectId);
+      project.phases[phaseIndex].taskApproved++
+      project.phases[phaseIndex].tasks[taskIndex].approved = true
     }
   },
 });
 
-export const { addProject, addPhase, updateCheckList, addNewCheckList, deleteCheckList, updateCheckListStatus, setProject, addTask } = projectSlice.actions;
+export const { addProject, addPhase, updateCheckList, addNewCheckList, deleteCheckList, updateCheckListStatus, setProject, addTask,
+  startTask, completeTask, approveTask
+} = projectSlice.actions;
 export default projectSlice.reducer;

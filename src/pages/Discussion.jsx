@@ -74,8 +74,8 @@ const Discussion = () => {
     <>
       <Box padding={1} bgcolor='white' margin={0} overflow={"hidden"}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <CustomBox display='flex' flexDirection='column' height='100vh' width='30%' padding={0.5} sx={{
-            overflowX: 'scroll',
+          <CustomBox display='flex' flexDirection='column' height='97vh' width='30%' padding={0.5} sx={{
+            
           }}>
             <Button fullWidth variant="contained" onClick={() => setOpen(true)}>+ Discussion</Button>
             {

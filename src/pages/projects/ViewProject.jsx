@@ -59,8 +59,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Add, ArrowBack, Filter, Filter1, Search, Sort } from "@mui/icons-material";
 import { IconButton, Box, Button, Typography, Switch } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { Tabs, TabsList, TabPanel, Tab } from '@mui/base'
 import { useNavigate, useParams, Link, Outlet, useLocation } from "react-router-dom";
-import { addPhase, addTask } from '../../store/projectSlice';
+import { addPhase, addTask, approveTask, completeTask, startTask } from '../../store/projectSlice';
 
 
 const ViewProject = () => {
@@ -92,7 +93,7 @@ const ViewProject = () => {
                   <ArrowBack sx={{ fontSize: 20 }} /> Back
                 </button>
               </Link>
-              <Link to="Tasks" className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:outline-none font-medium rounded-lg text-sm px-2.5 py-1.5 text-center inline-flex dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 me-2 mb-2">
+              <Link to={location.pathname} className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:outline-none font-medium rounded-lg text-sm px-2.5 py-1.5 text-center inline-flex dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 me-2 mb-2">
                 <button type="button" onClick={() => setSelectedSection("overview")}>
                   Tasks
                 </button>
@@ -217,11 +218,11 @@ const ProjectOverview = () => {
             <Box key={phase.id}>
               <div className="flex justify-between mb-1">
                 <span className="text-base font-medium text-blue-700 dark:text-white">{phase.name}</span>
-                <span className="text-sm font-medium text-blue-700 dark:text-white">{project.progress}%</span>
+                <span className="text-sm font-medium text-blue-700 dark:text-white">{Math.round(((phase.taskApproved / phase.totalTasks)*100))}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div className="relative bg-blue-600 h-2.5 rounded-full" style={{ width: 45 + '%', zIndex: 1 }}></div>
-                <div className="relative bg-blue-200 h-2.5 rounded-full -mt-[10px]" style={{ width: 60 + '%', zIndex: 0 }}></div>
+                <div className="relative bg-blue-600 h-2.5 rounded-full" style={{ width: ((phase.taskApproved / phase.totalTasks)*100) + '%', zIndex: 1 }}></div>
+                <div className="relative bg-blue-200 h-2.5 rounded-full -mt-[10px]" style={{ width: ((phase.tasksCompleted / phase.totalTasks)*100) + '%', zIndex: 0 }}></div>
               </div>
               <div className="flex justify-start gap-5 mt-1">
                 <span className="text-sm font-medium text-blue-600 dark:text-white">Approved</span>
@@ -252,7 +253,10 @@ const ProjectPhases = () => {
       phase: {
         id: phase+project.phases.length,
         name: phase,
-        tasks: []
+        tasks: [],
+        tasksCompleted: 0,
+        totalTasks: 0,
+        taskApproved: 0
       }
     }))
   }
@@ -349,26 +353,27 @@ const ProjectPhases = () => {
                   </td>
                   <td className=" bg-white px-4 py-5 text-sm">
                     <div className="flex justify-between mb-1">
-                      <span className="text-base font-medium text-blue-700 dark:text-white">Current Process</span>
-                      <span className="text-sm font-medium text-blue-700 dark:text-white">{project.progress}%</span>
+                      <span className="text-base font-medium text-blue-700 dark:text-white">{phase.name}</span>
+                      <span className="text-sm font-medium text-blue-700 dark:text-white">{Math.round(((phase.taskApproved / phase.totalTasks)*100))}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                      <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: project.progress + '%' }}></div>
+                      <div className="relative bg-blue-600 h-2.5 rounded-full" style={{ width: ((phase.taskApproved / phase.totalTasks)*100) + '%', zIndex: 1 }}></div>
+                      <div className="relative bg-blue-200 h-2.5 rounded-full -mt-[10px]" style={{ width: ((phase.tasksCompleted / phase.totalTasks)*100) + '%', zIndex: 0 }}></div>
                     </div>
                   </td>
                   <td className="bg-white px-4 py-5 text-sm">
                     <div className='flex items-center justify-center'>
-                      {phase.tasks.length}
+                      {phase.tasksCompleted ?? 0}
                     </div>
                   </td>
                   <td className="bg-white px-4 py-5 text-sm">
                     <div className='flex items-center justify-center'>
-                      {phase.tasks.length}
+                      {phase.taskApproved ?? 0}
                     </div>
                   </td>
                   <td className="bg-white px-4 py-5 text-sm">
                     <div className='flex items-center justify-center'>
-                      {phase.tasks.length}
+                      {phase.totalTasks ?? 0}
                     </div>
                   </td>
                 </tr>
@@ -387,6 +392,7 @@ const ProjectTasks = () => {
   const dispatch = useDispatch()
   const [openFilter, setOpenFilter] = useState(false)
   const [openAdd, setOpenAdd] = useState(false)
+  const [openTask, setOpenTask] = useState('')
 
   const handleAddTask = () => {
     let taskName = document.getElementById('newTask').value
@@ -405,8 +411,33 @@ const ProjectTasks = () => {
         member,
         eCDate,
         completed: false,
-        approved: false
+        approved: false,
+        started: false
       }
+    }))
+  }
+  console.log(project)
+  const handleStartTask = (phaseIndex, index) => {
+    dispatch(startTask({
+      projectId: project.projectId,
+      phaseIndex,
+      taskIndex: index
+    }))
+  }
+
+  const handleCompleteTask = (phaseIndex, index) => {
+    dispatch(completeTask({
+      projectId: project.projectId,
+      phaseIndex,
+      taskIndex: index
+    }))
+  }
+
+  const handleApproveTask = (phaseIndex, index) => {
+    dispatch(approveTask({
+      projectId: project.projectId,
+      phaseIndex,
+      taskIndex: index
     }))
   }
 
@@ -517,7 +548,7 @@ const ProjectTasks = () => {
       <Button size="small" variant='contained' startIcon={<Search />}>Search</Button>
     </Box>
     <Box>
-        <table className="hidden w-full rounded-md text-gray-900 md:block overflow-y-auto h-[65vh]">
+        {/* <table className="hidden w-full rounded-md text-gray-900 md:block overflow-y-auto h-[65vh]">
           <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
             <tr>
               <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
@@ -537,6 +568,12 @@ const ProjectTasks = () => {
               </th>
               <th scope="col" className="px-4 py-5 font-medium w-full">
                 Priority
+              </th>
+              <th scope="col" className="px-4 py-5 font-medium w-full">
+                Completed
+              </th>
+              <th scope="col" className="px-4 py-5 font-medium w-full">
+                Approved
               </th>
             </tr>
           </thead>
@@ -565,12 +602,244 @@ const ProjectTasks = () => {
                   <td className="bg-white px-4 py-5 text-sm">
                     {x.priority}
                   </td>
+                  <td className="bg-white px-4 py-5 text-sm">
+                    {x.completed ? 'Yes' : 'No'}
+                  </td>
+                  <td className="bg-white px-4 py-5 text-sm">
+                    {x.approved ? 'Yes' : 'No'}
+                  </td>
                 </tr>  
                 ))
               }
             })}
           </tbody>
-        </table>
+        </table> */}
+      </Box>
+      <Box>
+        <Tabs defaultValue={1}>
+          <TabsList className='mb-4 flex text-medium items-center content-between min-w-tabs-list'>
+            <Tab slotProps={{
+              root: ({ selected, disabled }) => ({
+                className: `${
+                  selected 
+                  ? 'text-blue-500 bg-white border-b-2 border-blue-500'
+                  : 'text-black bg-trasparent focus:text-gray hover:text-blue-400'
+                }
+                ${
+                  disabled 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : 'cursor-pointer'
+                } text-[12.5px] font-bold p-2 m-1.5 border-0 rounded-lg rounded-b-none flex justify-center focus:outline-0 focus:shadow-outline-blue-light`,
+              })
+            }}
+            value={1}
+            >
+              All
+            </Tab>
+            <Tab slotProps={{
+              root: ({ selected, disabled }) => ({
+                className: `${
+                  selected 
+                  ? 'text-blue-500 bg-white border-b-2 border-blue-500'
+                  : 'text-black bg-trasparent focus:text-gray hover:text-blue-400'
+                }
+                ${
+                  disabled 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : 'cursor-pointer'
+                } text-[12.5px] font-bold p-2 m-1.5 border-0 rounded-lg rounded-b-none flex justify-center focus:outline-0 focus:shadow-outline-blue-light`,
+              })
+            }}
+            value={2}
+            >
+              Completed
+            </Tab>
+            <Tab slotProps={{
+              root: ({ selected, disabled }) => ({
+                className: `${
+                  selected 
+                  ? 'text-blue-500 bg-white border-b-2 border-blue-500'
+                  : 'text-black bg-trasparent focus:text-gray hover:text-blue-400'
+                }
+                ${
+                  disabled 
+                  ? 'cursor-not-allowed opacity-50' 
+                  : 'cursor-pointer'
+                } text-[12.5px] font-bold p-2 m-1.5 border-0 rounded-lg rounded-b-none flex justify-center focus:outline-0 focus:shadow-outline-blue-light`,
+              })
+            }}
+            value={3}
+            >
+              Approved
+            </Tab>
+          </TabsList>
+          <TabPanel className='w-full text-medium' value={1}>
+            <div className='flex flex-col gap-2'>
+              {project.phases.map((phase, phaseIndex) => {
+                if(phase.id === phaseId) {
+                  return phase.tasks.map((x, index) => (
+                    <div className='border rounded border-gray-400'>
+                      <div key={x.taskId} className="flex flex-row items-center justify-between border rounded border-gray-400 p-2 cursor-pointer" onClick={() => setOpenTask(x.taskId)}>
+                        <div className="w-[85%]">
+                          <h4 className='text-medium text-[17.5px]'>{x.taskName}</h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.taskId}</h4>
+                        </div>
+                        <div className='w-fit-content flex flex-col items-end'>
+                          <h4 className='text-medium text-[15px]'>{x.priority} Priority</h4>
+                          <h4 className={`text-medium text-[15px] ${x.started ? 'text-green-400' : 'text-red-400'}`}>{x.approved ? 'Approved' : x.completed ? 'Completed' : x.started ? 'Started' : 'Not Started'}</h4>
+                        </div>
+                      </div>
+                      { openTask === x.taskId && 
+                      <div className='p-2 flex flex-row gap-5 items-center'>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Expected Completion Date: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.eCDate}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Assigned To: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.member}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Completed: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.completed ? 'Completed': 'No'}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Approved: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.approved ? 'Approved': 'No'}</h4>
+                        </div>
+                        <div>
+                          {x.completed || !x.started ?
+                            <Button size="small" variant='contained' disabled onClick={() => handleCompleteTask(phaseIndex, index)}>Complete</Button>
+                            :
+                            <Button size="small" variant='contained' onClick={() => handleCompleteTask(phaseIndex, index)}>Complete</Button>
+                          }
+                          
+                        </div>
+                        <div>
+                          {x.approved || !x.completed ?
+                            <Button size="small" variant='contained' disabled onClick={() => handleApproveTask(phaseIndex, index)}>Approve</Button>
+                            :
+                            <Button size="small" variant='contained' onClick={() => handleApproveTask(phaseIndex, index)}>Approve</Button>
+                          }
+                        </div>
+                        <div>
+                          {x.started ?
+                            <Button size="small" variant='contained' disabled onClick={() => handleStartTask(phaseIndex, index)}>Start</Button>
+                            :
+                            <Button size="small" variant='contained' onClick={() => handleStartTask(phaseIndex, index)}>Start</Button>
+                          }
+                        </div>
+                      </div>}
+                    </div>
+                  ))
+                }
+              })}
+            </div>
+          </TabPanel>
+          <TabPanel className='w-full text-medium' value={2}>
+            <div className='flex flex-col gap-2'>
+              {project.phases.map((phase, phaseIndex) => {
+                if(phase.id === phaseId) {
+                  return phase.tasks.map((x, index) => {
+                    if(x.completed && !x.approved){
+                     return <div className='border rounded border-gray-400'>
+                      <div key={x.taskId} className="flex flex-row items-center border rounded border-gray-400 p-2 cursor-pointer" onClick={() => setOpenTask(x.taskId)}>
+                        <div className="w-[88%]">
+                          <h4 className='text-medium text-[17.5px]'>{x.taskName}</h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.taskId}</h4>
+                        </div>
+                        <div className='w-fit-content flex flex-col items-end'>
+                          <h4 className='text-medium text-[15px]'>{x.priority} Priority</h4>
+                          <h4 className={`text-medium text-[15px] ${x.started ? 'text-green-400' : 'text-red-400'}`}>{x.approved ? 'Approved' : x.completed ? 'Completed' : x.started ? 'Started' : 'Not Started'}</h4>
+                        </div>
+                      </div>
+                      { openTask === x.taskId && 
+                      <div className='p-2 flex flex-row gap-5 items-center'>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Expected Completion Date: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.eCDate}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Assigned To: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.member}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Completed: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.completed ? 'Completed': 'No'}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Approved: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.approved ? 'Approved': 'No'}</h4>
+                        </div>
+                        <div>
+                          <Button size="small" variant='contained' disabled>Complete</Button>
+                        </div>
+                        <div>
+                          <Button size="small" variant='contained' onClick={() => handleApproveTask(phaseIndex, index)}>Approve</Button>
+                        </div>
+                        <div>
+                          <Button size="small" variant='contained' disabled>Start</Button>
+                        </div>
+                      </div>}
+                    </div>
+                }})
+                }
+              })}
+            </div>
+          </TabPanel>
+          <TabPanel className='w-full text-medium' value={3}>
+          <div className='flex flex-col gap-2'>
+              {project.phases.map((phase) => {
+                if(phase.id === phaseId) {
+                  return phase.tasks.map((x, index) => {
+                    if(x.approved){
+                     return <div className='border rounded border-gray-400'>
+                      <div key={x.taskId} className="flex flex-row items-center border rounded border-gray-400 p-2 cursor-pointer" onClick={() => setOpenTask(x.taskId)}>
+                        <div className="w-[88%]">
+                          <h4 className='text-medium text-[17.5px]'>{x.taskName}</h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.taskId}</h4>
+                        </div>
+                        <div className='w-fit-content flex flex-col items-end'>
+                          <h4 className='text-medium text-[15px]'>{x.priority} Priority</h4>
+                          <h4 className={`text-medium text-[15px] ${x.approved ? 'text-green-400' : 'text-red-400'}`}>{x.approved ? 'Approved' : x.completed ? 'Completed' : x.started ? 'Started' : 'Not Started'}</h4>
+                        </div>
+                      </div>
+                      { openTask === x.taskId && 
+                      <div className='p-2 flex flex-row gap-5 items-center'>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Expected Completion Date: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.eCDate}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Assigned To: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.member}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Completed: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.completed ? 'Completed': 'No'}</h4>
+                        </div>
+                        <div>
+                          <h4 className='text-medium text-[15px]'>Approved: </h4>
+                          <h4 className='text-medium text-[15px] text-gray-500'>{x.approved ? 'Approved': 'No'}</h4>
+                        </div>
+                        <div>
+                          <Button size="small" variant='contained' disabled>Complete</Button>
+                        </div>
+                        <div>
+                          <Button size="small" variant='contained' disabled>Approve</Button>
+                        </div>
+                        <div>
+                          <Button size="small" variant='contained' disabled>Start</Button>
+                        </div>
+                      </div>}
+                    
+                    </div>
+                }})
+                }
+              })}
+            </div>
+          </TabPanel>
+        </Tabs>
       </Box>
     </Box>
   );
