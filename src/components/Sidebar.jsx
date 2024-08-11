@@ -166,12 +166,12 @@ const Sidebar = () => {
   const location = useLocation();
 
   const determineSelected = (path) => {
-    switch (path) {
-      case '/projects':
+    switch (path.split('/')[1]) {
+      case 'projects':
         return 1;
-      case '/employees':
+      case 'employees':
         return 2;
-      case '/dashboard':
+      case 'discussion':
         return 3;
       default:
         return 0;
@@ -231,7 +231,7 @@ const Sidebar = () => {
               <IconButton onClick={toggleDrawer} sx={{ position: 'relative', top: 5 }}>
                 <MenuOutlined sx={{ color: "white" }}/>
               </IconButton>
-              { open && <img src={Logo} alt="logo" width={125} height={75}></img> }
+              { open && <img src={Logo} alt="logo" className="hidden" width={125} height={75}></img> }
             </Box>
             {open ? (
               <Button variant="contained" size="large" startIcon={<Avatar>UN</Avatar>}

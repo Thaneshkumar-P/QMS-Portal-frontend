@@ -117,14 +117,6 @@ const Employees = () => {
           else{
             setAlert(true)
             console.log(result.data)
-            // setTimeout(() => {
-            //   if(result.data.Register.username)
-            //     document.getElementsByClassName('MuiAlert-message')[0].innerHTML = `${result.data.Register.username}`
-            //   else if(result.data.Register.email)
-            //     document.getElementsByClassName('MuiAlert-message')[0].innerHTML = `${result.data.Register.email}`
-            //   else if(result.data.Register.password)
-            //     document.getElementsByClassName('MuiAlert-message')[0].innerHTML = `${result.data.Register.password}`
-            // }, 1)
             setTimeout(() => {
               const errorMessage = result.data.Register;
               document.getElementsByClassName('MuiAlert-message')[0].innerHTML = errorMessage.username || errorMessage.email || errorMessage.password;

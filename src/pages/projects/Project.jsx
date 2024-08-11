@@ -567,6 +567,8 @@ function CustomizedSnackbars({ open, setOpen, type, message }) {
   );
 }
 
+export { CustomizedSnackbars }
+
 export const NewProject = () => {
 
   const [teamMembers, setTeamMembers] = useState([])

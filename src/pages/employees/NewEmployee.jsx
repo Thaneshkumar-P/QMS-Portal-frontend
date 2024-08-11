@@ -5,25 +5,162 @@ import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { setUser } from "../../store/userSlice"
+import { ApolloClient, createHttpLink, gql, InMemoryCache } from "@apollo/client"
+import { CustomizedSnackbars } from "../projects/Project"
 
 const NewEmployee = () => {
 
+  const link = createHttpLink({
+    uri: process.env.REACT_APP_API_URL,
+    credentials: 'include'
+  })
+
+  const client = new ApolloClient({
+    link,
+    cache: new InMemoryCache(),
+  });
+
+
   const [newRole, setNewRole] = useState(false)
+  const [openSnack, setOpenSnack] = useState(false)
+  const [snackType, setSnackType] = useState('')
+  const [snackMessage, setSnackMessage] = useState('')
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  let roles = ['Admin', 'Project Manager', 'Team Leader', 'Sr. Software Developer', 'Software Devloper', 'Lead Generation', 'BDA', 'DBA', 'Content Writer']
+  let roles = ['Admin', 'Project Manager-PM', 'Team Leader-TL', 'Sr. Software Developer-SrSR', 'Software Devloper-SD', 'Lead Generation-LD', 'BDA', 'DBA', 'Content Writer-CW']
 
   const validateFields = () => {
+    let firstName = document.getElementById('firstName').value
+    let middleName = document.getElementById('middleName').value
+    let lastName = document.getElementById('lastName').value
+    let fatherName = document.getElementById('fatherName').value
+    let email = document.getElementById('email').value
+    let phone = document.getElementById('phone').value
+    let altPhone = document.getElementById('altPhone').value
+    let address1 = document.getElementById('addressL1').value
+    let address2 = document.getElementById('addressL2').value
+    let city = document.getElementById('city').value
+    let state = document.getElementById('state').value
+    let nation = document.getElementById('nation').value
+    let pincode = document.getElementById('pin').value
+    let workType = document.getElementById('workType').value
+    let role = document.getElementById('role').value
 
+    console.table(firstName, middleName, lastName, fatherName, email, phone, altPhone, address1, address2, city, state, nation, pincode, workType, role)
+    setSnackType('warning')
+    if(!firstName) {
+      setOpenSnack(true)
+      setSnackMessage('First Name is required')
+      return false
+    }
+    if(!fatherName) {
+      setOpenSnack(true)
+      setSnackMessage('Father Name is required')
+      return false
+    }
+    if(!email) {
+      setOpenSnack(true)
+      setSnackMessage('Email is required')
+      return false
+    }
+    if(!phone) {
+      setOpenSnack(true)
+      setSnackMessage('Phone Number is required')
+      return false
+    }
+    if(!address1) {
+      setOpenSnack(true)
+      setSnackMessage('address is required')
+      return false
+    }
+    if(!city) {
+      setOpenSnack(true)
+      setSnackMessage('City Name is required')
+      return false
+    }
+    if(!state) {
+      setOpenSnack(true)
+      setSnackMessage('State Name is required')
+      return false
+    }
+    if(!nation) {
+      setOpenSnack(true)
+      setSnackMessage('Nation Name is required')
+      return false
+    }
+    if(!pincode) {
+      setOpenSnack(true)
+      setSnackMessage('pincode is required')
+      return false
+    }
+    if(!workType) {
+      setOpenSnack(true)
+      setSnackMessage('WorkType is required')
+      return false
+    }
+    if(!role) {
+      setOpenSnack(true)
+      setSnackMessage('Choose a Role')
+      return false
+    }
+
+    return {
+      firstName,
+      email,
+      role,
+      lastName,
+      middleName,
+      fatherName,
+      phoneNo: phone,
+      altPhoneNo: altPhone,
+      address: [address1, address2],
+      city,
+      state,
+      nation,
+      pincode,
+      workType,
+    }
   }
 
   const handleNewEmployee = () => {
     let validatedFields = validateFields()
-    if(validatedFields){
-      
+    if(validatedFields)
+    try {
+      client
+        .mutate({
+          mutation: gql`
+            mutation Register($firstName: String!, $middleName: String, $lastName: String, $fatherName: String!, $email: String!, $phoneNo: String!, $altPhoneNo: String, $address: [String]!, $city: String!, $state: String!, $nation: String!, $pincode: String!, $workType: String!, $role: String!) {
+              Register(firstName: $firstName, middleName: $middleName, lastName: $lastName, fatherName: $fatherName, email: $email, phoneNo: $phoneNo, altPhoneNo: $altPhoneNo, address: $address, city: $city, state: $state, nation: $nation, pincode: $pincode, workType: $workType, role: $role) {
+                message
+                status
+                username
+                email
+                password
+              }
+            }
+          `,
+          variables: {firstName: validatedFields.firstName, middleName: validatedFields.middleName, lastName: validatedFields.lastName, fatherName: validatedFields.fatherName, email: validatedFields.email, phoneNo: validatedFields.phoneNo, altPhoneNo: validatedFields.altPhoneNo, address: validatedFields.address, city: validatedFields.city, state: validatedFields.state, nation: validatedFields.nation, pincode: validatedFields.pincode, workType: validatedFields.workType, role: validatedFields.role },
+        })
+        .then( async (result) => {
+          if(result.data.Register.status){
+            try{
+
+            }
+            catch{
+
+            }
+          }
+          else{
+
+          }
+        })
+        .catch((error) => console.log('Errors:', error.message));
+    } catch (error) {
+      console.log('Error:', error.message);
     }
   }
+
 
   return (
     <>
@@ -174,8 +311,8 @@ const NewEmployee = () => {
                       className="peer block w-full rounded-md border border-gray-200 py-2 pl-2 mb-2 text-sm outline-2 placeholder:text-gray-500"
                     />
                     <input
-                      id="addressL1"
-                      name="addressL1"
+                      id="addressL2"
+                      name="addressL2"
                       type="text"
                       placeholder="Address line 2"
                       className="peer block w-full rounded-md border border-gray-200 py-2 pl-2 text-sm outline-2 placeholder:text-gray-500"
@@ -278,14 +415,14 @@ const NewEmployee = () => {
               </div>
               { newRole ?
                 <div className="mb-4">
-                  <label htmlFor="newRole" className="mb-2 block text-sm font-medium">
+                  <label htmlFor="role" className="mb-2 block text-sm font-medium">
                     New Role
                   </label>
                   <div className="relative mt-2 rounded-md">
                     <div className="relative">
                       <input
-                        id="newRole"
-                        name="newRole"
+                        id="role"
+                        name="role"
                         type="text"
                         placeholder="Role Name"
                         className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
@@ -339,6 +476,7 @@ const NewEmployee = () => {
             </Box>
           </Box>
         </Box>
+        <CustomizedSnackbars open={openSnack} setOpen={setOpenSnack} type={snackType} message={snackMessage} />
       </Box>
     </>
   )
